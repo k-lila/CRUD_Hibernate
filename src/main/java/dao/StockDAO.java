@@ -13,8 +13,8 @@ import jakarta.persistence.criteria.Root;
 
 public class StockDAO extends GenericDAO<Stock, Long> implements IStockDAO {
 
-    public StockDAO() {
-        super(Stock.class);
+    public StockDAO(String persistenceUnit) {
+        super(Stock.class, persistenceUnit);
     }
 
     @Override

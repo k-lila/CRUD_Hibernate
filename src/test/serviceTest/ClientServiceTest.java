@@ -20,7 +20,7 @@ public class ClientServiceTest {
     private IClientService clientService;
 
     public ClientServiceTest() {
-        IClientDAO dao = new ClientDAO();
+        IClientDAO dao = new ClientDAO("crud_Test");
         clientService = new ClientService(dao);
     }
 

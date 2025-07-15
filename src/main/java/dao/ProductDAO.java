@@ -5,8 +5,8 @@ import domain.Product;
 import exceptions.DAOException;
 
 public class ProductDAO extends GenericDAO<Product, Long> implements IProductDAO {
-    public ProductDAO() {
-        super(Product.class);
+    public ProductDAO(String persistenceUnit) {
+        super(Product.class, persistenceUnit);
     }
 
     @Override

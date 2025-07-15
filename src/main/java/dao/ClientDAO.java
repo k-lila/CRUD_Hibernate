@@ -5,8 +5,8 @@ import domain.Client;
 import exceptions.DAOException;
 
 public class ClientDAO extends GenericDAO<Client, Long> implements IClientDAO {
-    public ClientDAO() {
-        super(Client.class);
+    public ClientDAO(String persistenceUnit) {
+        super(Client.class, persistenceUnit);
     }
 
     @Override

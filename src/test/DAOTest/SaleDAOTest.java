@@ -21,9 +21,9 @@ import exceptions.DAOException;
 
 public class SaleDAOTest {
 
-    private SaleDAO saleDAO = new SaleDAO();
-    private IClientDAO clientDAO = new ClientDAO();
-    private IProductDAO productDAO = new ProductDAO();
+    private SaleDAO saleDAO = new SaleDAO("crud_Test");
+    private IClientDAO clientDAO = new ClientDAO("crud_Test");
+    private IProductDAO productDAO = new ProductDAO("crud_Test");
 
     private Client createClient(String cpf) throws DAOException {
         Client client = new Client();

@@ -19,8 +19,8 @@ public class StockDAOTest {
     private StockDAO stockDAO;
 
     public StockDAOTest() {
-        productDAO = new ProductDAO();
-        stockDAO = new StockDAO();
+        productDAO = new ProductDAO("crud_Test");
+        stockDAO = new StockDAO("crud_Test");
     }
 
     private Product createProduct(String code, BigDecimal price) throws DAOException {

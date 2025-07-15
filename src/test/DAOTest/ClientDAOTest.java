@@ -19,7 +19,7 @@ public class ClientDAOTest {
     private Client clientTest;
 
     public ClientDAOTest() {
-        this.clientDAO = new ClientDAO();
+        this.clientDAO = new ClientDAO("crud_Test");
         this.clientTest = new Client();
         clientTest.setName("teste");
         clientTest.setCpf("1");

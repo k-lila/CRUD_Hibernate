@@ -18,7 +18,7 @@ public class ProductDAOTest {
     private Product productTest;
 
     public ProductDAOTest() {
-        this.productDAO = new ProductDAO();
+        this.productDAO = new ProductDAO("crud_Test");
         this.productTest = new Product();
         productTest.setCode("P1");
         productTest.setName("teste");

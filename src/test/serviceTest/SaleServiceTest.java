@@ -36,13 +36,13 @@ public class SaleServiceTest {
     private ISaleService saleService;
 
     public SaleServiceTest() {
-        saleDAOTest = new SaleDAO();
-        clientDAOtest = new ClientDAO();
-        productDAOtest = new ProductDAO();
-        stockDAOtest = new StockDAO();
+        saleDAOTest = new SaleDAO("crud_Test");
+        clientDAOtest = new ClientDAO("crud_Test");
+        productDAOtest = new ProductDAO("crud_Test");
+        stockDAOtest = new StockDAO("crud_Test");
 
-        ISaleDAO _saleDAO = new SaleDAO();
-        IStockDAO _stockDAO = new StockDAO();
+        ISaleDAO _saleDAO = new SaleDAO("crud_Test");
+        IStockDAO _stockDAO = new StockDAO("crud_Test");
         saleService = new SaleService(_saleDAO, _stockDAO);
     }
 
@@ -164,7 +164,6 @@ public class SaleServiceTest {
         Collection<Sale> all = saleService.showAll();
         Assertions.assertEquals(5, all.size());
     }
-
 
     @Test
     public void closeSaleTest() throws DAOException, ServiceException {

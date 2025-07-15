@@ -20,7 +20,7 @@ public class ProductServiceTest {
     private IProductService productService;
 
     public ProductServiceTest() {
-        IProductDAO dao = new ProductDAO();
+        IProductDAO dao = new ProductDAO("crud_Test");
         productService = new ProductService(dao);
     }
 

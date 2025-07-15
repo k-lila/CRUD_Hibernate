@@ -25,9 +25,9 @@ public class StockServiceTest {
 
     public StockServiceTest() {
     
-        IStockDAO dao = new StockDAO();
+        IStockDAO dao = new StockDAO("crud_Test");
         stockService = new StockService(dao);
-        iProductDAO = new ProductDAO();
+        iProductDAO = new ProductDAO("crud_Test");
     }
 
     private Product createProduct(String code) throws DAOException {

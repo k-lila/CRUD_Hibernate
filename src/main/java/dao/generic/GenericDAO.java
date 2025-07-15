@@ -13,11 +13,13 @@ import jakarta.persistence.Persistence;
 public abstract class GenericDAO<T extends Persistent, E extends Serializable> implements IGenericDAO<T, E> {
 
     private Class<T> persistentClass;
+    private String persistenceUnit;
     protected EntityManagerFactory entityManagerFactory;
     protected EntityManager entityManager;
 
-    public GenericDAO(Class<T> persistentClass) {
+    public GenericDAO(Class<T> persistentClass, String persistenceUnit) {
         this.persistentClass = persistentClass;
+        this.persistenceUnit = persistenceUnit;
     }
 
     private String getSelectSql() {
@@ -25,7 +27,7 @@ public abstract class GenericDAO<T extends Persistent, E extends Serializable> i
     }
 
     protected void openConnection() {
-        entityManagerFactory = Persistence.createEntityManagerFactory("crud_JPA");
+        entityManagerFactory = Persistence.createEntityManagerFactory(persistenceUnit);
         entityManager = entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
     }

@@ -20,8 +20,8 @@ import jakarta.persistence.criteria.Root;
 
 public class SaleDAO extends GenericDAO<Sale, Long> implements ISaleDAO{
 
-    public SaleDAO() {
-        super(Sale.class);
+    public SaleDAO(String persistenceUnit) {
+        super(Sale.class, persistenceUnit);
     }
 
     @Override
