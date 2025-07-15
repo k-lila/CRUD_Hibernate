@@ -62,7 +62,7 @@ public class Sale implements Persistent {
     @Column(name = "STATUS", nullable = false)
     private Status status;
 
-    @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "sale", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductQuantity> productList;
 
     public Sale() {
@@ -96,10 +96,8 @@ public class Sale implements Persistent {
             ProductQuantity productQuantity = op.get();
             if (productQuantity.getQuantity() > quantity) {
                 productQuantity.removeQuantity(quantity);
-                recalculateTotal();
             } else {
                 productList.remove(op.get());
-                recalculateTotal();
             }
             recalculateTotal();
         }

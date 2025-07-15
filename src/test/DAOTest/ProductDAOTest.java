@@ -1,4 +1,4 @@
-package Test.DAOTest;
+package test.DAOTest;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -30,7 +30,7 @@ public class ProductDAOTest {
 
     @AfterEach
     public void cleanup() throws DAOException {
-        for (Product product : productDAO.showAll()) {
+        for (Product product : productDAO.all()) {
             productDAO.delete(product.getId());
         }
     }
@@ -48,6 +48,9 @@ public class ProductDAOTest {
         Product result = productDAO.read(productTest.getId());
         Assertions.assertNotNull(result);
         Assertions.assertEquals(productTest.getCode(), result.getCode());
+        Product productByCode = productDAO.searchByCode(productTest.getCode());
+        Assertions.assertNotNull(productByCode);
+        Assertions.assertEquals(productTest.getName(), result.getName());
     }
 
     @Test
@@ -75,7 +78,7 @@ public class ProductDAOTest {
     }
 
     @Test
-    public void testShowAll() throws DAOException {
+    public void testAll() throws DAOException {
         productDAO.create(productTest);
         Product another = new Product();
         another.setCode("P2");
@@ -84,7 +87,7 @@ public class ProductDAOTest {
         another.setPrice(BigDecimal.TWO);
         another.addCategory("Utilidade");
         productDAO.create(another);
-        Collection<Product> all = productDAO.showAll();
+        Collection<Product> all = productDAO.all();
         Assertions.assertEquals(2, all.size());
     }
 }

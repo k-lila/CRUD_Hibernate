@@ -1,4 +1,4 @@
-package Test.DAOTest;
+package test.DAOTest;
 
 
 import java.time.Instant;
@@ -22,7 +22,7 @@ public class ClientDAOTest {
         this.clientDAO = new ClientDAO();
         this.clientTest = new Client();
         clientTest.setName("teste");
-        clientTest.setCpf(1l);
+        clientTest.setCpf("1");
         clientTest.setAddress("endereço");
         clientTest.setNumber(1);
         clientTest.setCity("cidade");
@@ -33,7 +33,7 @@ public class ClientDAOTest {
 
     @AfterEach
     public void cleanup() throws DAOException {
-        for (Client client : clientDAO.showAll()) {
+        for (Client client : clientDAO.all()) {
             clientDAO.delete(client.getId());
         }
     }
@@ -53,6 +53,9 @@ public class ClientDAOTest {
         Client client = clientDAO.read(clientTest.getId());
         Assertions.assertNotNull(client);
         Assertions.assertEquals(clientTest.getCpf(), client.getCpf());
+        Client clientByCPF = clientDAO.searchByCPF(clientTest.getCpf());
+        Assertions.assertNotNull(clientByCPF);
+        Assertions.assertEquals(clientTest.getFone(), clientByCPF.getFone());
     }
 
     @Test
@@ -77,11 +80,11 @@ public class ClientDAOTest {
     }
 
     @Test
-    public void testShowAll() throws DAOException {
+    public void testAll() throws DAOException {
         clientDAO.create(clientTest);
         Client another = new Client();
         another.setName("novo");
-        another.setCpf(2L);
+        another.setCpf("2");
         another.setAddress("novo");
         another.setNumber(1);
         another.setCity("novo");
@@ -89,7 +92,7 @@ public class ClientDAOTest {
         another.setFone(999999L);
         another.setCreationDate(Instant.now());
         clientDAO.create(another);
-        Collection<Client> allClients = clientDAO.showAll();
+        Collection<Client> allClients = clientDAO.all();
         Assertions.assertEquals(2, allClients.size());
     }
 }

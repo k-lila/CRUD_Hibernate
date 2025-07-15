@@ -23,8 +23,8 @@ public class Client implements Persistent {
 	@Column(name = "NAME", nullable = false, length = 50)
     private String name;
 
-    @Column(name = "CPF", nullable = false, unique = true)
-    private Long cpf;
+    @Column(name = "CPF", nullable = false, unique = true, length = 11)
+    private String cpf;
 
     @Column(name = "FONE")
     private Long fone;
@@ -56,10 +56,10 @@ public class Client implements Persistent {
     public void setName(String name) {
         this.name = name;
     }
-    public Long getCpf() {
+    public String getCpf() {
         return cpf;
     }
-    public void setCpf(Long cpf) {
+    public void setCpf(String cpf) {
         this.cpf = cpf;
     }
     public Long getFone() {

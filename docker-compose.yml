@@ -1,0 +1,18 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres:17.5-bookworm
+    container_name: postgres-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ego
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: database_test
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

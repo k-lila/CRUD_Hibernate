@@ -1,16 +1,12 @@
-package Test.DAOTest;
+package test.DAOTest;
 
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Collection;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import dao.ClientDAO;
 import dao.IClientDAO;
@@ -22,21 +18,14 @@ import domain.Product;
 import domain.Sale;
 import domain.Sale.Status;
 import exceptions.DAOException;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SaleDAOTest {
-
-    private EntityManagerFactory entityManagerFactoryTest;
-    private EntityManager entityManagerTest;
 
     private SaleDAO saleDAO = new SaleDAO();
     private IClientDAO clientDAO = new ClientDAO();
     private IProductDAO productDAO = new ProductDAO();
 
-    private Client createClient(Long cpf) throws DAOException {
+    private Client createClient(String cpf) throws DAOException {
         Client client = new Client();
         client.setName("Cliente Teste");
         client.setCpf(cpf);
@@ -60,50 +49,37 @@ public class SaleDAOTest {
         return product;
     }
 
-    @BeforeAll
-    public void init() {
-        entityManagerFactoryTest = Persistence.createEntityManagerFactory("crud_JPA");
-    }
-
-    @BeforeEach
-    public void setup() {
-        entityManagerTest = entityManagerFactoryTest.createEntityManager();
-    }
-
     @AfterEach
     public void cleanup() throws DAOException {
-        entityManagerTest.getTransaction().begin();
-        entityManagerTest.createNativeQuery("TRUNCATE TABLE tb_product_quantity CASCADE").executeUpdate();
-        entityManagerTest.createNativeQuery("TRUNCATE TABLE tb_sales CASCADE").executeUpdate();
-        entityManagerTest.createNativeQuery("TRUNCATE TABLE tb_products CASCADE").executeUpdate();
-        entityManagerTest.createNativeQuery("TRUNCATE TABLE tb_clients CASCADE").executeUpdate();
-        entityManagerTest.getTransaction().commit();
-        if (entityManagerTest.isOpen()) entityManagerTest.close();
-    }
-
-    @AfterAll
-    public void close() {
-        if (entityManagerFactoryTest.isOpen()) entityManagerFactoryTest.close();
+        for (Sale sale : saleDAO.all()) {
+            saleDAO.delete(sale.getId());
+        }
+        for (Client client : clientDAO.all()) {
+            clientDAO.delete(client.getId());
+        }
+        for (Product product : productDAO.all()) {
+            productDAO.delete(product.getId());
+        }
     }
 
     @Test
-    public void testCreateSale() throws DAOException {
-        Client clientTest = createClient(10l);
+    public void testCreate() throws DAOException {
+        Client clientTest = createClient("10");
         Product productTest = createProduct("PS1", BigDecimal.ONE);
         Sale sale = new Sale();
         sale.setClient(clientTest);
         sale.setCode("S1");
         sale.setDate(Instant.now());
         sale.setStatus(Status.INICIADA);
-        sale.addProduct(productTest, 1);
+        sale.addProduct(productTest, 5);
         boolean created = saleDAO.create(sale);
         Assertions.assertTrue(created);
         Assertions.assertNotNull(sale.getId());
     }
 
     @Test
-    public void testReadSale() throws DAOException {
-        Client client = createClient(11l);
+    public void testRead() throws DAOException {
+        Client client = createClient("11");
         Product product = createProduct("PS2", BigDecimal.TWO);
         Sale sale = new Sale();
         sale.setClient(client);
@@ -112,15 +88,19 @@ public class SaleDAOTest {
         sale.setStatus(Status.INICIADA);
         sale.addProduct(product, 2);
         saleDAO.create(sale);
+        System.out.println(sale.getId() + "###aqui");
         Sale result = saleDAO.searchWithCollection(sale.getId());
         Assertions.assertNotNull(result);
         Assertions.assertEquals("S2", result.getCode());
         Assertions.assertEquals(new BigDecimal("4.00"), result.getTotalPrice());
+        Sale resultByCode = saleDAO.searchByCode(sale.getCode());
+        Assertions.assertNotNull(resultByCode);
+        Assertions.assertEquals(new BigDecimal("4.00"), resultByCode.getTotalPrice());
     }
 
     @Test
-    public void testUpdateSale() throws DAOException {
-        Client client = createClient(12l);
+    public void testUpdate() throws DAOException {
+        Client client = createClient("12");
         Product product = createProduct("PS3", BigDecimal.ONE);
         Sale sale = new Sale();
         sale.setClient(client);
@@ -142,8 +122,8 @@ public class SaleDAOTest {
     }
 
     @Test
-    public void testShowAllSales() throws DAOException {
-        Client client = createClient(13l);
+    public void testAll() throws DAOException {
+        Client client = createClient("13");
         Product product = createProduct("PS4", BigDecimal.ONE);
         for (int i = 0; i < 10; i++) {
             Sale sale = new Sale();
@@ -154,7 +134,7 @@ public class SaleDAOTest {
             sale.setStatus(Status.CONCLUIDA);
             saleDAO.create(sale);
         }
-        Collection<Sale> sales = saleDAO.showAll();
+        Collection<Sale> sales = saleDAO.all();
         Assertions.assertEquals(10, sales.size());
     }
 }

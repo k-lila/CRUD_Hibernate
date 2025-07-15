@@ -1,29 +1,19 @@
-package Test.DAOTest;
+package test.DAOTest;
 
 import java.math.BigDecimal;
+import java.util.Collection;
 
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 
 import dao.ProductDAO;
 import dao.StockDAO;
 import domain.Product;
 import domain.Stock;
 import exceptions.DAOException;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class StockDAOTest {
-
-    private EntityManagerFactory entityManagerFactoryTest;
-    private EntityManager entityManagerTest;
 
     private ProductDAO productDAO;
     private StockDAO stockDAO;
@@ -43,31 +33,18 @@ public class StockDAOTest {
         return product;
     }
 
-    @BeforeAll
-    public void init() {
-        entityManagerFactoryTest = Persistence.createEntityManagerFactory("crud_JPA");
-    }
-
-    @BeforeEach
-    public void setup() {
-        entityManagerTest = entityManagerFactoryTest.createEntityManager();
-    }
-
     @AfterEach
     public void cleanup() throws DAOException {
-        entityManagerTest.getTransaction().begin();
-        entityManagerTest.createNativeQuery("TRUNCATE TABLE tb_products CASCADE").executeUpdate();
-        entityManagerTest.getTransaction().commit();
-        if (entityManagerTest.isOpen()) entityManagerTest.close();
-    }
-
-    @AfterAll
-    public void close() {
-        if (entityManagerFactoryTest.isOpen()) entityManagerFactoryTest.close();
+        for (Stock stock : stockDAO.all()) {
+            stockDAO.delete(stock.getId());
+        }
+        for (Product product : productDAO.all()) {
+            productDAO.delete(product.getId());
+        }
     }
 
     @Test
-    public void createStockEntryTest() throws DAOException {
+    public void testCreate() throws DAOException {
         Product product = createProduct("ST1", BigDecimal.ONE);
         Assertions.assertNotNull(product);
         Stock stockTest = new Stock();
@@ -79,7 +56,7 @@ public class StockDAOTest {
     }
 
     @Test
-    public void readStockEntryTest() throws DAOException {
+    public void testRead() throws DAOException {
         Product product = createProduct("ST2", BigDecimal.ONE);
         Assertions.assertNotNull(product);
         Stock stockTest = new Stock();
@@ -94,7 +71,7 @@ public class StockDAOTest {
     }
 
     @Test
-    public void readWithCodeStockEntryTest() throws DAOException {
+    public void testReadWithCode() throws DAOException {
         Product product = createProduct("ST3", BigDecimal.ONE);
         Assertions.assertNotNull(product);
         Stock stockTest = new Stock();
@@ -110,7 +87,7 @@ public class StockDAOTest {
 
 
     @Test
-    public void updateStockEntryTest() throws DAOException {
+    public void testUpdate() throws DAOException {
         Product productA = createProduct("ST4A", BigDecimal.ONE);
         Product productB = createProduct("ST4B", BigDecimal.ONE);
         Assertions.assertNotNull(productA);
@@ -130,7 +107,7 @@ public class StockDAOTest {
     }
 
     @Test
-    public void deleteStockEntryTest() throws DAOException {
+    public void testDelete() throws DAOException {
         Product product = createProduct("ST5", BigDecimal.ONE);
         Assertions.assertNotNull(product);
         Stock stockTest = new Stock();
@@ -143,7 +120,7 @@ public class StockDAOTest {
     }
 
     @Test
-    public void checkQuantity() throws DAOException {
+    public void testCheckQuantity() throws DAOException {
         Product product = createProduct("ST6", BigDecimal.ONE);
         Assertions.assertNotNull(product);
         Stock stockTest = new Stock();
@@ -155,5 +132,18 @@ public class StockDAOTest {
         Assertions.assertTrue(verifyQuantity);
         verifyQuantity = stockDAO.verifyQuantity("ST6",20);
         Assertions.assertFalse(verifyQuantity);
+    }
+
+    @Test
+    public void testAll() throws DAOException {
+        for (int i = 0; i < 5; i++) {
+            Product p = createProduct(String.valueOf(i), BigDecimal.ONE);
+            Stock s = new Stock();
+            s.setProduct(p);
+            s.setQuantity(1);
+            stockDAO.create(s);
+        }
+        Collection<Stock> all = stockDAO.all();
+        Assertions.assertEquals(5, all.size());
     }
 }

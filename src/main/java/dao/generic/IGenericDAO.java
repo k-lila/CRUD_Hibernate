@@ -11,5 +11,5 @@ public interface IGenericDAO <T extends Persistent, E extends Serializable> {
     public T read(E value) throws DAOException;
     public Boolean update(T entity) throws DAOException;
     public Boolean delete(E value) throws DAOException;
-    public Collection<T> showAll() throws DAOException;
+    public Collection<T> all() throws DAOException;
 }

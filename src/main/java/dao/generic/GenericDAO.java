@@ -41,13 +41,14 @@ public abstract class GenericDAO<T extends Persistent, E extends Serializable> i
             openConnection();
             entityManager.persist(entity);
             entityManager.getTransaction().commit();
-            closeConnection();
             return true;
         } catch (Exception e) {
             if (entityManager.getTransaction().isActive()) {
                 entityManager.getTransaction().rollback();
             }
             throw new DAOException("ERRO AO ADICIONAR OBJETO", e);
+        } finally {
+            closeConnection();
         }
     }
 
@@ -57,10 +58,11 @@ public abstract class GenericDAO<T extends Persistent, E extends Serializable> i
             openConnection();
             T entity = entityManager.find(persistentClass, value);
             entityManager.getTransaction().commit();
-            closeConnection();
             return entity;
         } catch (Exception e) {
             throw new DAOException("ERRO AO CONSULTAR OBJETO", e);
+        } finally {
+            closeConnection();
         }
     }
 
@@ -70,7 +72,6 @@ public abstract class GenericDAO<T extends Persistent, E extends Serializable> i
             openConnection();
             T toUpdate = entityManager.find(persistentClass, entity.getId());
             if (toUpdate == null) {
-                closeConnection();
                 return false;
             } else {
                 entityManager.merge(entity);
@@ -82,6 +83,8 @@ public abstract class GenericDAO<T extends Persistent, E extends Serializable> i
                 entityManager.getTransaction().rollback();
             }
             throw new DAOException("ERRO AO ALTERAR OBJETO", e);
+        } finally {
+            closeConnection();
         }
     }
 
@@ -91,12 +94,10 @@ public abstract class GenericDAO<T extends Persistent, E extends Serializable> i
             openConnection();
             T toDelete = entityManager.find(persistentClass, value);
             if (toDelete == null) {
-                closeConnection();
                 return false;
             } else {
                 entityManager.remove(toDelete);
                 entityManager.getTransaction().commit();
-                closeConnection();
                 return true;
             }
         } catch (Exception e) {
@@ -104,18 +105,21 @@ public abstract class GenericDAO<T extends Persistent, E extends Serializable> i
                 entityManager.getTransaction().rollback();
             }
             throw new DAOException("ERRO AO DELETAR OBJETO", e);
+        } finally {
+            closeConnection();
         }
     }
 
     @Override
-    public Collection<T> showAll() throws DAOException {
+    public Collection<T> all() throws DAOException {
         try {
             openConnection();
             List<T> all = entityManager.createQuery(getSelectSql(), persistentClass).getResultList();
-            closeConnection();
             return all;
         } catch (Exception e) {
             throw new DAOException("ERRO AO BUSCAR TODOS OS OBJETOS", e);
+        } finally {
+            closeConnection();
         }
     }
 }

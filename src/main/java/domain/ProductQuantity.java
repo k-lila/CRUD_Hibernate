@@ -23,7 +23,8 @@ public class ProductQuantity {
 	@SequenceGenerator(name="p_qty_seq", sequenceName="sq_prod_qty", initialValue = 1, allocationSize = 1)
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
+    @JoinColumn(name = "id_product_fk", nullable = false)
     private Product product;
 
     @Column(name = "QUANTITY", nullable = false)

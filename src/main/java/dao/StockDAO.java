@@ -17,89 +17,93 @@ public class StockDAO extends GenericDAO<Stock, Long> implements IStockDAO {
         super(Stock.class);
     }
 
-
-@Override
-public Boolean create(Stock stock) throws DAOException {
-    try {
-        openConnection();
-        Product product = entityManager.find(Product.class, stock.getProduct().getId());
-        stock.setProduct(product);
-        product.setStock(stock);
-        entityManager.persist(stock);
-        entityManager.flush();
-        entityManager.getTransaction().commit();
-        closeConnection();
-        return true;
-    } catch (Exception e) {
-        if (entityManager.getTransaction().isActive()) {
-            entityManager.getTransaction().rollback();
-        }
-        throw new DAOException("ERRO AO ADICIONAR OBJETO", e);
-    }
-}
-
-@Override
-public Boolean delete(Long id) throws DAOException {
-    try {
-        System.out.println("AQUI1");
-        openConnection();
-        Stock stock = entityManager.find(Stock.class, id);
-        System.out.println("AQUI2");
-        if (stock == null) {
+    @Override
+    public Boolean create(Stock stock) throws DAOException {
+        try {
+            openConnection();
+            Product product = entityManager.find(Product.class, stock.getProduct().getId());
+            stock.setProduct(product);
+            product.setStock(stock);
+            entityManager.persist(stock);
+            entityManager.flush();
+            entityManager.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            if (entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+            }
+            throw new DAOException("ERRO AO ADICIONAR STOCK", e);
+        } finally {
             closeConnection();
-            return false;
         }
-        System.out.println("AQUI3");
-        Product product = stock.getProduct();
-        if (product != null) {
-            product.setStock(null);
-            entityManager.merge(product);
-        }
-        System.out.println("AQUI4");
-
-        entityManager.remove(stock);
-        System.out.println("AQUI5");
-        entityManager.getTransaction().commit();
-        System.out.println("AQUI6");
-        closeConnection();
-        System.out.println("AQUI7");
-        return true;
-    } catch (Exception e) {
-        if (entityManager.getTransaction().isActive()) {
-            entityManager.getTransaction().rollback();
-        }
-        throw new DAOException("ERRO AO DELETAR STOCK", e);
     }
-}
+    
+    @Override
+    public Boolean delete(Long id) throws DAOException {
+        try {
+            openConnection();
+            Stock stock = entityManager.find(Stock.class, id);
+            if (stock == null) {
+                return false;
+            }
+            Product product = stock.getProduct();
+            if (product != null) {
+                product.setStock(null);
+                entityManager.merge(product);
+            }
+            entityManager.remove(stock);
+            entityManager.getTransaction().commit();
+            return true;
+        } catch (Exception e) {
+            if (entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+            }
+            throw new DAOException("ERRO AO DELETAR STOCK", e);
+        } finally {
+            closeConnection();
+        }
+    }
 
     @Override
     public Stock read(Long id) throws DAOException {
-        openConnection();
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Stock> query = cb.createQuery(Stock.class);
-        Root<Stock> root = query.from(Stock.class);
-        root.fetch("product", JoinType.INNER);
-        query.select(root).where(cb.equal(root.get("id"), id));
-        TypedQuery<Stock> typedQuery = entityManager.createQuery(query);
-        Stock stock = typedQuery.getSingleResult();
-        entityManager.getTransaction().commit();
-        closeConnection();
-        return stock;
+        try {
+            openConnection();
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Stock> query = cb.createQuery(Stock.class);
+            Root<Stock> root = query.from(Stock.class);
+            root.fetch("product", JoinType.INNER);
+            query.select(root).where(cb.equal(root.get("id"), id));
+            TypedQuery<Stock> typedQuery = entityManager.createQuery(query);
+            Stock stock = typedQuery.getSingleResult();
+            entityManager.getTransaction().commit();
+            return stock;
+        } catch(Exception e) {
+            throw new DAOException("ERRO AO LER STOCK", e);
+        } finally {
+            closeConnection();
+        }
     }
 
     @Override
     public Stock searchByProductCode(String code) throws DAOException {
-        openConnection();
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Stock> query = cb.createQuery(Stock.class);
-        Root<Stock> root = query.from(Stock.class);
-        Join<Stock, Product> productJoin = root.join("product");
-        query.select(root).where(cb.equal(productJoin.get("code"), code));
-        TypedQuery<Stock> typedQuery = entityManager.createQuery(query);
-        Stock result = typedQuery.getSingleResult();
-        entityManager.getTransaction().commit();
-        closeConnection();
-        return result;
+        try {
+            openConnection();
+            CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+            CriteriaQuery<Stock> query = cb.createQuery(Stock.class);
+            Root<Stock> root = query.from(Stock.class);
+            Join<Stock, Product> productJoin = root.join("product");
+            query.select(root).where(cb.equal(productJoin.get("code"), code));
+            TypedQuery<Stock> typedQuery = entityManager.createQuery(query);
+            Stock result = typedQuery.getSingleResult();
+            entityManager.getTransaction().commit();
+            return result;
+        } catch(jakarta.persistence.NoResultException e) {
+            return null;
+        } catch(Exception e) {
+            throw new DAOException("ERRO AO PROCURAR PRODUTO PELO CÓDIGO", e);
+        } finally {
+            closeConnection();
+        }
     }
 
     @Override
@@ -111,5 +115,4 @@ public Boolean delete(Long id) throws DAOException {
             return false;
         }
     }
-
 }
