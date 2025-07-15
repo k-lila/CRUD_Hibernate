@@ -33,8 +33,12 @@ public abstract class GenericDAO<T extends Persistent, E extends Serializable> i
     }
 
     protected void closeConnection() {
-        entityManager.close();
-        entityManagerFactory.close();
+        if (entityManager != null && entityManager.isOpen()) {
+            entityManager.close();
+        }
+        if (entityManagerFactory != null && entityManagerFactory.isOpen()) {
+            entityManagerFactory.close();
+        }
     }
 
     @Override
