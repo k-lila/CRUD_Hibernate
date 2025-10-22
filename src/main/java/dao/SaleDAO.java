@@ -10,6 +10,7 @@ import domain.ProductQuantity;
 import domain.Sale;
 import domain.Sale.Status;
 import exceptions.DAOException;
+import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -20,8 +21,8 @@ import jakarta.persistence.criteria.Root;
 
 public class SaleDAO extends GenericDAO<Sale, Long> implements ISaleDAO{
 
-    public SaleDAO(String persistenceUnit) {
-        super(Sale.class, persistenceUnit);
+    public SaleDAO(EntityManagerFactory entityManagerFactory) {
+        super(Sale.class, entityManagerFactory);
     }
 
     @Override

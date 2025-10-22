@@ -8,18 +8,16 @@ import dao.Persistent;
 import exceptions.DAOException;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 
 public abstract class GenericDAO<T extends Persistent, E extends Serializable> implements IGenericDAO<T, E> {
 
     private Class<T> persistentClass;
-    private String persistenceUnit;
     protected EntityManagerFactory entityManagerFactory;
     protected EntityManager entityManager;
 
-    public GenericDAO(Class<T> persistentClass, String persistenceUnit) {
+    public GenericDAO(Class<T> persistentClass, EntityManagerFactory entityManagerFactory) {
         this.persistentClass = persistentClass;
-        this.persistenceUnit = persistenceUnit;
+        this.entityManagerFactory = entityManagerFactory;
     }
 
     private String getSelectSql() {
@@ -27,17 +25,16 @@ public abstract class GenericDAO<T extends Persistent, E extends Serializable> i
     }
 
     protected void openConnection() {
-        entityManagerFactory = Persistence.createEntityManagerFactory(persistenceUnit);
         entityManager = entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
     }
 
     protected void closeConnection() {
-        if (entityManager != null && entityManager.isOpen()) {
+        if (entityManager != null) {
+            if (entityManager.getTransaction().isActive()) {
+                entityManager.getTransaction().rollback();
+            }
             entityManager.close();
-        }
-        if (entityManagerFactory != null && entityManagerFactory.isOpen()) {
-            entityManagerFactory.close();
         }
     }
 

@@ -9,9 +9,11 @@ import org.junit.jupiter.api.Test;
 
 import dao.ProductDAO;
 import dao.StockDAO;
+import dao.singleton.EntityManagerSingleton;
 import domain.Product;
 import domain.Stock;
 import exceptions.DAOException;
+import jakarta.persistence.EntityManagerFactory;
 
 public class StockDAOTest {
 
@@ -19,8 +21,9 @@ public class StockDAOTest {
     private StockDAO stockDAO;
 
     public StockDAOTest() {
-        productDAO = new ProductDAO("crud_Test");
-        stockDAO = new StockDAO("crud_Test");
+        EntityManagerFactory singleton = EntityManagerSingleton.getInstance();
+        productDAO = new ProductDAO(singleton);
+        stockDAO = new StockDAO(singleton);
     }
 
     private Product createProduct(String code, BigDecimal price) throws DAOException {

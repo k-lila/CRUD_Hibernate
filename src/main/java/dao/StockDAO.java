@@ -4,6 +4,7 @@ import dao.generic.GenericDAO;
 import domain.Product;
 import domain.Stock;
 import exceptions.DAOException;
+import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -13,8 +14,8 @@ import jakarta.persistence.criteria.Root;
 
 public class StockDAO extends GenericDAO<Stock, Long> implements IStockDAO {
 
-    public StockDAO(String persistenceUnit) {
-        super(Stock.class, persistenceUnit);
+    public StockDAO(EntityManagerFactory entityManagerFactory) {
+        super(Stock.class, entityManagerFactory);
     }
 
     @Override

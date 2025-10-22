@@ -3,10 +3,11 @@ package dao;
 import dao.generic.GenericDAO;
 import domain.Product;
 import exceptions.DAOException;
+import jakarta.persistence.EntityManagerFactory;
 
 public class ProductDAO extends GenericDAO<Product, Long> implements IProductDAO {
-    public ProductDAO(String persistenceUnit) {
-        super(Product.class, persistenceUnit);
+    public ProductDAO(EntityManagerFactory entityManagerFactory) {
+        super(Product.class, entityManagerFactory);
     }
 
     @Override

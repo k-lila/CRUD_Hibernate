@@ -16,6 +16,7 @@ import dao.IStockDAO;
 import dao.ProductDAO;
 import dao.SaleDAO;
 import dao.StockDAO;
+import dao.singleton.EntityManagerSingleton;
 import domain.Client;
 import domain.Product;
 import domain.Sale;
@@ -23,6 +24,7 @@ import domain.Stock;
 import domain.Sale.Status;
 import exceptions.DAOException;
 import exceptions.ServiceException;
+import jakarta.persistence.EntityManagerFactory;
 import services.ISaleService;
 import services.SaleService;
 
@@ -36,13 +38,14 @@ public class SaleServiceTest {
     private ISaleService saleService;
 
     public SaleServiceTest() {
-        saleDAOTest = new SaleDAO("crud_Test");
-        clientDAOtest = new ClientDAO("crud_Test");
-        productDAOtest = new ProductDAO("crud_Test");
-        stockDAOtest = new StockDAO("crud_Test");
+        EntityManagerFactory singleton = EntityManagerSingleton.getInstance();
+        saleDAOTest = new SaleDAO(singleton);
+        clientDAOtest = new ClientDAO(singleton);
+        productDAOtest = new ProductDAO(singleton);
+        stockDAOtest = new StockDAO(singleton);
 
-        ISaleDAO _saleDAO = new SaleDAO("crud_Test");
-        IStockDAO _stockDAO = new StockDAO("crud_Test");
+        ISaleDAO _saleDAO = new SaleDAO(singleton);
+        IStockDAO _stockDAO = new StockDAO(singleton);
         saleService = new SaleService(_saleDAO, _stockDAO);
     }
 

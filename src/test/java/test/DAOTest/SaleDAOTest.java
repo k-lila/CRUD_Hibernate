@@ -13,17 +13,26 @@ import dao.IClientDAO;
 import dao.IProductDAO;
 import dao.ProductDAO;
 import dao.SaleDAO;
+import dao.singleton.EntityManagerSingleton;
 import domain.Client;
 import domain.Product;
 import domain.Sale;
 import domain.Sale.Status;
 import exceptions.DAOException;
+import jakarta.persistence.EntityManagerFactory;
 
 public class SaleDAOTest {
 
-    private SaleDAO saleDAO = new SaleDAO("crud_Test");
-    private IClientDAO clientDAO = new ClientDAO("crud_Test");
-    private IProductDAO productDAO = new ProductDAO("crud_Test");
+    private SaleDAO saleDAO;
+    private IClientDAO clientDAO;
+    private IProductDAO productDAO;
+
+    public SaleDAOTest() {
+        EntityManagerFactory singleton = EntityManagerSingleton.getInstance();
+        this.saleDAO = new SaleDAO(singleton);
+        this.clientDAO = new ClientDAO(singleton);
+        this.productDAO = new ProductDAO(singleton);
+    }
 
     private Client createClient(String cpf) throws DAOException {
         Client client = new Client();

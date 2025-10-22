@@ -11,10 +11,12 @@ import dao.IProductDAO;
 import dao.IStockDAO;
 import dao.ProductDAO;
 import dao.StockDAO;
+import dao.singleton.EntityManagerSingleton;
 import domain.Product;
 import domain.Stock;
 import exceptions.DAOException;
 import exceptions.ServiceException;
+import jakarta.persistence.EntityManagerFactory;
 import services.IStockService;
 import services.StockService;
 
@@ -24,10 +26,10 @@ public class StockServiceTest {
     private IProductDAO iProductDAO;
 
     public StockServiceTest() {
-    
-        IStockDAO dao = new StockDAO("crud_Test");
+        EntityManagerFactory singleton = EntityManagerSingleton.getInstance();    
+        IStockDAO dao = new StockDAO(singleton);
         stockService = new StockService(dao);
-        iProductDAO = new ProductDAO("crud_Test");
+        iProductDAO = new ProductDAO(singleton);
     }
 
     private Product createProduct(String code) throws DAOException {

@@ -3,10 +3,11 @@ package dao;
 import dao.generic.GenericDAO;
 import domain.Client;
 import exceptions.DAOException;
+import jakarta.persistence.EntityManagerFactory;
 
 public class ClientDAO extends GenericDAO<Client, Long> implements IClientDAO {
-    public ClientDAO(String persistenceUnit) {
-        super(Client.class, persistenceUnit);
+    public ClientDAO(EntityManagerFactory entityManagerFactory) {
+        super(Client.class, entityManagerFactory);
     }
 
     @Override

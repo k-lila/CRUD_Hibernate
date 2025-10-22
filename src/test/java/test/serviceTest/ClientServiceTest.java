@@ -9,9 +9,11 @@ import org.junit.jupiter.api.Test;
 
 import dao.ClientDAO;
 import dao.IClientDAO;
+import dao.singleton.EntityManagerSingleton;
 import domain.Client;
 import exceptions.DAOException;
 import exceptions.ServiceException;
+import jakarta.persistence.EntityManagerFactory;
 import services.ClientService;
 import services.IClientService;
 
@@ -20,7 +22,8 @@ public class ClientServiceTest {
     private IClientService clientService;
 
     public ClientServiceTest() {
-        IClientDAO dao = new ClientDAO("crud_Test");
+        EntityManagerFactory singleton = EntityManagerSingleton.getInstance();
+        IClientDAO dao = new ClientDAO(singleton);
         clientService = new ClientService(dao);
     }
 
